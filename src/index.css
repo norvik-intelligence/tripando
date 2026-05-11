@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  /* Let Lenis handle smooth scrolling — disable native scroll-behavior */
+  scroll-behavior: auto;
+}
+
+body {
+  background-color: #f5f0e8;
+  overscroll-behavior: none;
+}
+
+#root {
+  isolation: isolate;
+}
