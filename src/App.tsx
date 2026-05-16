@@ -5,6 +5,9 @@ import Lenis from 'lenis'
 import Hero from './components/Hero'
 import FloatingElements from './components/FloatingElements'
 import StepsSection from './components/StepsSection'
+import DestinationsGrid from './components/DestinationsGrid'
+import FinalCTA from './components/FinalCTA'
+import Footer from './components/Footer'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -31,6 +34,9 @@ export default function App() {
       <Hero />
       <FloatingElements />
       <StepsSection />
+      <DestinationsGrid />
+      <FinalCTA />
+      <Footer />
     </main>
   )
 }
