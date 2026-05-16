@@ -4,6 +4,20 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { howItWorksSteps } from '@/lib/data'
 
+const prefersReduced =
+  typeof window !== 'undefined'
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    : false
+
+const fadeUp = {
+  hidden: prefersReduced ? {} : { opacity: 0, y: 32 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+}
+
+const stagger = {
+  visible: { transition: { staggerChildren: prefersReduced ? 0 : 0.1 } },
+}
+
 export default function HowItWorks() {
   const lineRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(lineRef, { once: true, margin: '-100px' })
@@ -12,58 +26,118 @@ export default function HowItWorks() {
     <section
       id="how-it-works"
       aria-labelledby="how-heading"
-      className="py-24 px-4 sm:px-6"
+      className="py-28 px-4 sm:px-6 relative overflow-hidden"
+      style={{ background: '#0D0D0B' }}
     >
-      <div className="max-w-7xl mx-auto">
+      {/* Ghost section number */}
+      <div
+        className="absolute top-8 right-8 select-none pointer-events-none font-bold"
+        aria-hidden="true"
+        style={{
+          fontSize: 'clamp(160px, 25vw, 300px)',
+          lineHeight: 1,
+          color: 'rgba(255,255,255,0.03)',
+          letterSpacing: '-0.06em',
+        }}
+      >
+        02
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="mb-16"
         >
+          <p
+            className="text-[13px] font-semibold uppercase mb-4"
+            style={{ color: '#6B7280', letterSpacing: '0.08em' }}
+          >
+            So funktioniert es
+          </p>
           <h2
             id="how-heading"
-            className="text-[38px] sm:text-[52px] md:text-[60px] font-bold text-primary leading-tight tracking-tight max-w-2xl"
+            className="font-bold leading-tight max-w-[560px]"
+            style={{
+              fontSize: 'clamp(36px, 5vw, 64px)',
+              letterSpacing: '-0.04em',
+              color: '#FFFFFF',
+            }}
           >
-            Von der Idee zum bestätigten Ausflug in wenigen Minuten.
+            Von der Idee zum bestätigten Ausflug.
           </h2>
         </motion.div>
 
         {/* Desktop horizontal timeline */}
         <div className="hidden md:block relative" ref={lineRef}>
           {/* Connector line */}
-          <div className="absolute top-10 left-10 right-10 h-[2px] bg-black/5 overflow-hidden rounded-full">
+          <div
+            className="absolute left-[56px] right-[56px] overflow-hidden rounded-full"
+            style={{ top: 24, height: 2, background: 'rgba(255,255,255,0.06)' }}
+          >
             <motion.div
-              className="h-full bg-lime rounded-full"
-              initial={{ scaleX: 0, originX: 0 }}
+              className="h-full rounded-full"
+              style={{
+                background: 'linear-gradient(90deg, #C7FF33 0%, rgba(199,255,51,0.4) 100%)',
+                transformOrigin: 'left center',
+              }}
+              initial={{ scaleX: 0 }}
               animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
-              transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              style={{ transformOrigin: 'left center' }}
+              transition={{ duration: 1.4, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
             />
           </div>
 
-          <div className="grid grid-cols-4 gap-6">
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+            className="grid grid-cols-4 gap-5"
+          >
             {howItWorksSteps.map((step, i) => (
               <motion.div
                 key={step.number}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                whileHover={{ rotate: 1, y: -4, transition: { duration: 0.2 } }}
-                className="bg-white rounded-3xl p-7 border border-black/[0.06] shadow-soft cursor-default"
+                variants={fadeUp}
+                whileHover={{
+                  borderColor: 'rgba(199,255,51,0.3)',
+                  boxShadow: '0 0 0 1px rgba(199,255,51,0.15), 0 20px 60px rgba(0,0,0,0.3)',
+                  y: -4,
+                  transition: { duration: 0.2, ease: 'easeOut' },
+                }}
+                className="relative cursor-default"
+                style={{
+                  padding: 28,
+                  borderRadius: 24,
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  transition: 'border-color 0.2s, box-shadow 0.2s',
+                }}
               >
-                <div className="w-10 h-10 rounded-full bg-lime flex items-center justify-center mb-6">
-                  <span className="text-[12px] font-bold text-dark-green">{step.number}</span>
+                {/* Step number badge */}
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center mb-6 flex-shrink-0"
+                  style={{ background: '#C7FF33' }}
+                >
+                  <span
+                    className="text-[13px] font-bold tabular"
+                    style={{ color: '#0D1F14', letterSpacing: '-0.01em' }}
+                  >
+                    {step.number}
+                  </span>
                 </div>
-                <h3 className="text-[18px] font-semibold text-primary mb-3 leading-tight">
+                <h3
+                  className="text-[17px] font-semibold mb-3 leading-tight"
+                  style={{ color: '#FFFFFF', letterSpacing: '-0.02em' }}
+                >
                   {step.title}
                 </h3>
-                <p className="text-[14px] text-secondary leading-relaxed">{step.description}</p>
+                <p className="text-[14px] leading-relaxed" style={{ color: '#6B7280' }}>
+                  {step.description}
+                </p>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
         {/* Mobile vertical steps */}
@@ -71,18 +145,29 @@ export default function HowItWorks() {
           {howItWorksSteps.map((step, i) => (
             <motion.div
               key={step.number}
-              initial={{ opacity: 0, x: -30 }}
+              initial={prefersReduced ? {} : { opacity: 0, x: -24 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              className="bg-white rounded-3xl p-6 border border-black/[0.06] shadow-soft flex gap-5"
+              className="flex gap-5 p-6 rounded-3xl"
+              style={{
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+              }}
             >
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-lime flex items-center justify-center">
-                <span className="text-[12px] font-bold text-dark-green">{step.number}</span>
+              <div
+                className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center"
+                style={{ background: '#C7FF33' }}
+              >
+                <span className="text-[13px] font-bold text-[#0D1F14] tabular">{step.number}</span>
               </div>
               <div>
-                <h3 className="text-[17px] font-semibold text-primary mb-2">{step.title}</h3>
-                <p className="text-[14px] text-secondary leading-relaxed">{step.description}</p>
+                <h3 className="text-[17px] font-semibold text-white mb-2 leading-tight">
+                  {step.title}
+                </h3>
+                <p className="text-[14px] leading-relaxed" style={{ color: '#6B7280' }}>
+                  {step.description}
+                </p>
               </div>
             </motion.div>
           ))}

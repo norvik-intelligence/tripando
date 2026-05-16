@@ -1,6 +1,21 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { ArrowRight } from 'lucide-react'
+
+const prefersReduced =
+  typeof window !== 'undefined'
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    : false
+
+const fadeUp = {
+  hidden: prefersReduced ? {} : { opacity: 0, y: 32 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+}
+
+const stagger = {
+  visible: { transition: { staggerChildren: prefersReduced ? 0 : 0.1 } },
+}
 
 export default function FinalCTA() {
   return (
@@ -11,83 +26,141 @@ export default function FinalCTA() {
     >
       <div className="max-w-7xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={prefersReduced ? {} : { opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="relative overflow-hidden rounded-[32px] bg-dark-green px-10 py-20 md:px-20 flex flex-col items-center text-center"
+          className="relative overflow-hidden"
+          style={{
+            borderRadius: 32,
+            background: '#C7FF33',
+            padding: 'clamp(48px, 8vw, 80px) clamp(32px, 5vw, 80px)',
+          }}
         >
-          {/* Decorative lime shapes */}
-          <div className="absolute top-[-20%] right-[-5%] w-[500px] h-[500px] rounded-full bg-lime opacity-[0.06] blur-[100px] pointer-events-none" aria-hidden="true" />
-          <div className="absolute bottom-[-20%] left-[-5%] w-[400px] h-[400px] rounded-full bg-lime opacity-[0.05] blur-[80px] pointer-events-none" aria-hidden="true" />
+          {/* Decorative background radial */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+            style={{
+              background: 'radial-gradient(ellipse 60% 60% at 50% 0%, #D4FF5A, transparent)',
+            }}
+          />
+
+          {/* Decorative circle arcs */}
           <svg
-            className="absolute bottom-8 right-12 opacity-[0.08]"
-            width="160"
-            height="160"
-            viewBox="0 0 160 160"
+            className="absolute bottom-0 right-0 pointer-events-none"
+            width="320"
+            height="320"
+            viewBox="0 0 320 320"
             fill="none"
             aria-hidden="true"
+            style={{ opacity: 0.15 }}
           >
-            <circle cx="80" cy="80" r="70" stroke="#C7FF33" strokeWidth="1" fill="none" />
-            <circle cx="80" cy="80" r="40" stroke="#C7FF33" strokeWidth="0.5" fill="none" />
-            <line x1="10" y1="80" x2="150" y2="80" stroke="#C7FF33" strokeWidth="0.5" />
-            <line x1="80" y1="10" x2="80" y2="150" stroke="#C7FF33" strokeWidth="0.5" />
-          </svg>
-          <svg
-            className="absolute top-8 left-12 opacity-[0.06]"
-            width="120"
-            height="120"
-            viewBox="0 0 120 120"
-            fill="none"
-            aria-hidden="true"
-          >
-            <rect x="10" y="10" width="100" height="100" rx="20" stroke="#C7FF33" strokeWidth="1" fill="none" />
-            <rect x="30" y="30" width="60" height="60" rx="12" stroke="#C7FF33" strokeWidth="0.5" fill="none" />
+            <circle cx="320" cy="320" r="200" stroke="#0D1F14" strokeWidth="1.5" fill="none" />
+            <circle cx="320" cy="320" r="130" stroke="#0D1F14" strokeWidth="1" fill="none" />
+            <circle cx="320" cy="320" r="70" stroke="#0D1F14" strokeWidth="0.8" fill="none" />
           </svg>
 
-          <div className="relative z-10 max-w-2xl">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-lime/15 border border-lime/30 mb-8"
-            >
-              <span className="w-2 h-2 rounded-full bg-lime" aria-hidden="true" />
-              <span className="text-lime/90 text-[13px] font-medium">Jetzt durchstarten</span>
+          {/* Ghost arrow */}
+          <div
+            className="absolute top-1/2 -translate-y-1/2 right-16 select-none pointer-events-none font-bold hidden lg:block"
+            aria-hidden="true"
+            style={{
+              fontSize: 200,
+              lineHeight: 1,
+              color: '#0D1F14',
+              opacity: 0.06,
+              letterSpacing: '-0.05em',
+            }}
+          >
+            →
+          </div>
+
+          {/* Decorative top-left shape */}
+          <svg
+            className="absolute top-8 left-8 pointer-events-none"
+            width="80"
+            height="80"
+            viewBox="0 0 80 80"
+            fill="none"
+            aria-hidden="true"
+            style={{ opacity: 0.15 }}
+          >
+            <rect x="4" y="4" width="72" height="72" rx="16" stroke="#0D1F14" strokeWidth="1.5" fill="none" />
+            <rect x="20" y="20" width="40" height="40" rx="8" stroke="#0D1F14" strokeWidth="1" fill="none" />
+          </svg>
+
+          {/* Content */}
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="relative z-10 max-w-2xl"
+          >
+            <motion.div variants={fadeUp}>
+              <span
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold mb-8"
+                style={{ background: 'rgba(13,31,20,0.12)', color: '#0D1F14', border: '1px solid rgba(13,31,20,0.15)' }}
+              >
+                <span className="w-2 h-2 rounded-full" style={{ background: '#0D1F14', opacity: 0.6 }} aria-hidden="true" />
+                Jetzt durchstarten
+              </span>
             </motion.div>
 
-            <h2
+            <motion.h2
               id="cta-heading"
-              className="text-[36px] sm:text-[52px] md:text-[60px] font-bold text-white leading-tight tracking-tight mb-6"
+              variants={fadeUp}
+              className="font-bold leading-tight mb-6"
+              style={{
+                fontSize: 'clamp(40px, 6vw, 72px)',
+                letterSpacing: '-0.04em',
+                color: '#0D1F14',
+              }}
             >
-              Bereit für die nächste Gruppenaktivität –{' '}
-              <span className="text-lime">ohne Verwaltungschaos?</span>
-            </h2>
-            <p className="text-[17px] text-white/70 leading-relaxed mb-10">
-              Starten Sie mit einem Pilotzugang für Ihre Einrichtung und testen Sie Tripando mit
-              echten Angeboten.
-            </p>
+              Bereit für die nächste Gruppenaktivität?
+            </motion.h2>
 
-            <div className="flex flex-wrap gap-4 justify-center">
+            <motion.p
+              variants={fadeUp}
+              className="text-[18px] leading-relaxed mb-10"
+              style={{ color: 'rgba(13,31,20,0.65)', maxWidth: 480 }}
+            >
+              Starten Sie mit einem Pilotzugang für Ihre Einrichtung und testen Sie Tripando
+              mit echten Angeboten. Kostenlos und ohne Risiko.
+            </motion.p>
+
+            <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
               <motion.a
                 href="#"
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 py-4 rounded-full bg-lime text-dark-green text-[15px] font-semibold focus-ring"
+                whileHover={prefersReduced ? {} : { scale: 1.04 }}
+                whileTap={prefersReduced ? {} : { scale: 0.97 }}
+                className="group flex items-center gap-2 px-8 py-4 rounded-full text-[15px] font-semibold focus-ring"
+                style={{ background: '#0D1F14', color: '#FFFFFF', letterSpacing: '-0.01em' }}
               >
                 Demo anfragen
+                <motion.span
+                  variants={{ hover: { x: 3 } }}
+                  aria-hidden="true"
+                >
+                  <ArrowRight size={16} />
+                </motion.span>
               </motion.a>
               <motion.a
                 href="#"
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 py-4 rounded-full border border-white/30 text-white text-[15px] font-semibold hover:bg-white/10 transition-colors focus-ring"
+                whileHover={prefersReduced ? {} : { scale: 1.04 }}
+                whileTap={prefersReduced ? {} : { scale: 0.97 }}
+                className="flex items-center gap-2 px-8 py-4 rounded-full text-[15px] font-semibold focus-ring"
+                style={{
+                  background: 'transparent',
+                  color: '#0D1F14',
+                  border: '1.5px solid rgba(13,31,20,0.3)',
+                }}
               >
                 Pilot starten
               </motion.a>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </motion.div>
       </div>
     </section>

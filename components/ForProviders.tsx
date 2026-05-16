@@ -4,12 +4,26 @@ import { motion } from 'framer-motion'
 import { Inbox, TrendingUp, Calendar, FileText, Building2, ArrowRight } from 'lucide-react'
 import { providerBenefits } from '@/lib/data'
 
-const iconMap: Record<string, React.ReactNode> = {
-  Inbox: <Inbox size={22} className="text-lime" />,
-  TrendingUp: <TrendingUp size={22} className="text-lime" />,
-  Calendar: <Calendar size={22} className="text-lime" />,
-  FileText: <FileText size={22} className="text-lime" />,
-  Building2: <Building2 size={22} className="text-lime" />,
+const iconComponents: Record<string, React.ElementType> = {
+  'Digitale Anfrageverwaltung': Inbox,
+  'Bessere Auslastung': TrendingUp,
+  'Planbare Gruppenbuchungen': Calendar,
+  'Saubere automatische Abrechnung': FileText,
+  'Zugang zu hunderten Einrichtungen': Building2,
+}
+
+const prefersReduced =
+  typeof window !== 'undefined'
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    : false
+
+const fadeUp = {
+  hidden: prefersReduced ? {} : { opacity: 0, y: 32 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+}
+
+const stagger = {
+  visible: { transition: { staggerChildren: prefersReduced ? 0 : 0.08 } },
 }
 
 export default function ForProviders() {
@@ -17,68 +31,121 @@ export default function ForProviders() {
     <section
       id="anbieter"
       aria-labelledby="providers-heading"
-      className="py-24 px-4 sm:px-6 bg-dark-green"
+      className="py-28 px-4 sm:px-6 relative overflow-hidden noise"
+      style={{ background: '#0D1F14' }}
     >
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col items-center text-center mb-14">
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="inline-block px-4 py-1.5 rounded-full bg-lime/15 text-lime text-[13px] font-semibold mb-6"
+      {/* Gradient orb top-right */}
+      <div
+        className="absolute pointer-events-none"
+        aria-hidden="true"
+        style={{
+          top: '-10%',
+          right: '-5%',
+          width: 400,
+          height: 400,
+          borderRadius: '50%',
+          background: 'rgba(199,255,51,0.08)',
+          filter: 'blur(80px)',
+        }}
+      />
+      {/* Gradient orb bottom-left */}
+      <div
+        className="absolute pointer-events-none"
+        aria-hidden="true"
+        style={{
+          bottom: '-10%',
+          left: '-5%',
+          width: 320,
+          height: 320,
+          borderRadius: '50%',
+          background: 'rgba(199,255,51,0.05)',
+          filter: 'blur(60px)',
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          className="mb-14 text-center"
+        >
+          <span
+            className="inline-block px-3 py-1.5 rounded-full text-[12px] font-semibold mb-6"
+            style={{ background: 'rgba(199,255,51,0.1)', color: '#C7FF33', border: '1px solid rgba(199,255,51,0.2)' }}
           >
             Für Anbieter
-          </motion.span>
-          <motion.h2
+          </span>
+          <h2
             id="providers-heading"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[38px] sm:text-[52px] md:text-[60px] font-bold text-white leading-tight tracking-tight max-w-3xl mb-4"
+            className="font-bold leading-tight max-w-3xl mx-auto mb-4"
+            style={{
+              fontSize: 'clamp(36px, 5vw, 60px)',
+              letterSpacing: '-0.04em',
+              color: '#FFFFFF',
+            }}
           >
-            Für Anbieter, die mehr{' '}
-            <span className="text-lime">Gruppenbuchungen</span>{' '}
-            erhalten möchten.
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-[17px] text-white/60 max-w-2xl leading-relaxed"
-          >
+            Mehr{' '}
+            <span className="text-lime-gradient">Gruppenbuchungen</span>{' '}
+            erhalten.
+          </h2>
+          <p className="text-[17px] max-w-2xl mx-auto leading-relaxed" style={{ color: '#6B7280' }}>
             Zoos, Museen, Vereine, Kursanbieter, Busunternehmen, Theater und Restaurants.
-          </motion.p>
-        </div>
+          </p>
+        </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
-          {providerBenefits.map((benefit, i) => (
-            <motion.div
-              key={benefit.title}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={{ scale: 1.02, y: -4, transition: { duration: 0.2 } }}
-              className="p-7 rounded-3xl bg-white/[0.06] border border-white/10 backdrop-blur-sm cursor-default"
-            >
-              <div className="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center mb-5">
-                {iconMap[benefit.title === 'Digitale Anfrageverwaltung' ? 'Inbox'
-                  : benefit.title === 'Bessere Auslastung' ? 'TrendingUp'
-                  : benefit.title === 'Planbare Gruppenbuchungen' ? 'Calendar'
-                  : benefit.title === 'Saubere automatische Abrechnung' ? 'FileText'
-                  : 'Building2']}
-              </div>
-              <h3 className="text-[18px] font-semibold text-white mb-2">{benefit.title}</h3>
-              <p className="text-[14px] text-white/60 leading-relaxed">{benefit.description}</p>
-            </motion.div>
-          ))}
-        </div>
-
+        {/* Cards */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          variants={stagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12"
+        >
+          {providerBenefits.map((benefit) => {
+            const Icon = iconComponents[benefit.title] ?? Building2
+            return (
+              <motion.div
+                key={benefit.title}
+                variants={fadeUp}
+                whileHover={{
+                  borderColor: 'rgba(199,255,51,0.3)',
+                  boxShadow: '0 0 0 1px rgba(199,255,51,0.1), 0 20px 60px rgba(0,0,0,0.4)',
+                  y: -4,
+                  transition: { duration: 0.2, ease: 'easeOut' },
+                }}
+                className="p-7 rounded-2xl cursor-default"
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  transition: 'border-color 0.2s, box-shadow 0.2s',
+                }}
+              >
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
+                  style={{ background: 'rgba(199,255,51,0.1)', border: '1px solid rgba(199,255,51,0.15)' }}
+                >
+                  <Icon size={20} aria-hidden="true" style={{ color: '#C7FF33' }} />
+                </div>
+                <h3
+                  className="text-[17px] font-semibold mb-2 leading-tight"
+                  style={{ color: '#FFFFFF', letterSpacing: '-0.02em' }}
+                >
+                  {benefit.title}
+                </h3>
+                <p className="text-[14px] leading-relaxed" style={{ color: '#6B7280' }}>
+                  {benefit.description}
+                </p>
+              </motion.div>
+            )
+          })}
+        </motion.div>
+
+        {/* CTA */}
+        <motion.div
+          initial={prefersReduced ? {} : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -86,9 +153,10 @@ export default function ForProviders() {
         >
           <motion.a
             href="#"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-lime text-dark-green text-[15px] font-semibold focus-ring"
+            whileHover={prefersReduced ? {} : { scale: 1.04 }}
+            whileTap={prefersReduced ? {} : { scale: 0.97 }}
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-[15px] font-semibold focus-ring"
+            style={{ background: '#C7FF33', color: '#0D1F14', letterSpacing: '-0.01em' }}
           >
             Als Anbieter registrieren
             <ArrowRight size={16} aria-hidden="true" />

@@ -4,167 +4,341 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 import { ArrowRight } from 'lucide-react'
 
-const pillLabels = [
-  'Geprüfte Anbieter',
-  'Gruppenbuchungen',
-  'Rechnung & Zahlung',
-  'Barrierefreiheitsfilter',
+const prefersReduced =
+  typeof window !== 'undefined'
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    : false
+
+const fadeUp = prefersReduced
+  ? { hidden: {}, visible: {} }
+  : {
+      hidden: { opacity: 0, y: 32 },
+      visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+    }
+
+const stagger = {
+  visible: { transition: { staggerChildren: prefersReduced ? 0 : 0.1 } },
+}
+
+const metrics = [
+  { value: '500+', label: 'Einrichtungen' },
+  { value: '10.000+', label: 'Buchungen' },
+  { value: '98 %', label: 'Weiterempfehlung' },
 ]
 
 export default function Hero() {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '20%'])
-
-  const prefersReducedMotion =
-    typeof window !== 'undefined'
-      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      : false
-
-  const fadeUp = {
-    hidden: prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 },
-    show: { opacity: 1, y: 0 },
-  }
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', prefersReduced ? '0%' : '18%'])
 
   return (
     <section
       ref={ref}
       id="hero"
       aria-labelledby="hero-headline"
-      className="pt-24 px-4 sm:px-6 pb-8"
+      className="pt-24 px-4 sm:px-6 pb-6"
     >
       <div className="max-w-7xl mx-auto">
         <div
-          className="relative w-full rounded-[32px] overflow-hidden"
-          style={{ minHeight: '90vh' }}
+          className="relative w-full overflow-hidden noise"
+          style={{
+            borderRadius: 32,
+            minHeight: 'min(90vh, 900px)',
+            background: '#0D1F14',
+          }}
         >
-          {/* Background with parallax */}
+          {/* Gradient layers */}
           <motion.div
-            style={prefersReducedMotion ? {} : { y: bgY }}
-            className="absolute inset-0 bg-dark-green"
+            style={{ y: bgY }}
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
           >
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#173D2B] via-[#1a4a32] to-[#0d2418]" />
-            {/* Lime geometric blobs */}
-            <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-lime opacity-[0.07] blur-[80px]" />
-            <div className="absolute bottom-[20%] right-[10%] w-[300px] h-[300px] rounded-full bg-lime opacity-[0.05] blur-[60px]" />
-            <div className="absolute top-[30%] left-[-5%] w-[400px] h-[400px] rounded-full bg-lime opacity-[0.04] blur-[100px]" />
-            {/* Abstract lime shapes */}
-            <div className="absolute top-12 right-12 w-2 h-2 rounded-full bg-lime opacity-60" />
-            <div className="absolute top-20 right-24 w-1.5 h-1.5 rounded-full bg-lime opacity-40" />
-            <div className="absolute bottom-32 right-16 w-3 h-3 rounded-full bg-lime opacity-30" />
-            <svg
-              className="absolute top-8 right-8 opacity-10"
-              width="200"
-              height="200"
-              viewBox="0 0 200 200"
-              fill="none"
-              aria-hidden="true"
-            >
-              <circle cx="100" cy="100" r="80" stroke="#C7FF33" strokeWidth="1" fill="none" />
-              <circle cx="100" cy="100" r="50" stroke="#C7FF33" strokeWidth="0.5" fill="none" />
-              <line x1="20" y1="100" x2="180" y2="100" stroke="#C7FF33" strokeWidth="0.5" />
-              <line x1="100" y1="20" x2="100" y2="180" stroke="#C7FF33" strokeWidth="0.5" />
-            </svg>
+            {/* Layer 1: base radial from bottom-left */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'radial-gradient(ellipse 80% 60% at 20% 100%, rgba(23,61,43,0.9) 0%, transparent 70%)',
+              }}
+            />
+            {/* Layer 2: lime hint top-right */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'radial-gradient(ellipse 50% 40% at 85% 10%, rgba(199,255,51,0.07) 0%, transparent 60%)',
+              }}
+            />
+            {/* Lime orb 1 */}
+            <motion.div
+              animate={prefersReduced ? {} : { scale: [1, 1.06, 1] }}
+              transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute rounded-full"
+              style={{
+                width: 600,
+                height: 600,
+                top: '-10%',
+                right: '-8%',
+                background: 'rgba(199,255,51,0.08)',
+                filter: 'blur(80px)',
+              }}
+            />
+            {/* Lime orb 2 */}
+            <motion.div
+              animate={prefersReduced ? {} : { scale: [1, 1.04, 1] }}
+              transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+              className="absolute rounded-full"
+              style={{
+                width: 400,
+                height: 400,
+                bottom: '10%',
+                right: '15%',
+                background: 'rgba(199,255,51,0.06)',
+                filter: 'blur(100px)',
+              }}
+            />
+            {/* Lime orb 3 */}
+            <motion.div
+              animate={prefersReduced ? {} : { scale: [1, 1.05, 1] }}
+              transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
+              className="absolute rounded-full"
+              style={{
+                width: 300,
+                height: 300,
+                top: '30%',
+                left: '-5%',
+                background: 'rgba(199,255,51,0.05)',
+                filter: 'blur(80px)',
+              }}
+            />
+            {/* Decorative dots */}
+            <div className="absolute top-12 right-12 w-2 h-2 rounded-full bg-[#C7FF33] opacity-50" />
+            <div className="absolute top-20 right-28 w-1.5 h-1.5 rounded-full bg-[#C7FF33] opacity-30" />
+            <div className="absolute bottom-32 right-16 w-2.5 h-2.5 rounded-full bg-[#C7FF33] opacity-25" />
+            <div className="absolute top-40 right-20 w-1 h-1 rounded-full bg-[#C7FF33] opacity-40" />
           </motion.div>
 
           {/* Content — bottom left */}
-          <div className="relative z-10 flex flex-col justify-end h-full min-h-[90vh] p-10 md:p-16">
-            <div className="max-w-3xl">
-              <motion.div
-                variants={fadeUp}
-                initial="hidden"
-                animate="show"
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-lime/30 mb-6"
-              >
-                <span className="w-2 h-2 rounded-full bg-lime animate-pulse" aria-hidden="true" />
-                <span className="text-lime/90 text-sm font-medium">B2B-Plattform für soziale Einrichtungen</span>
-              </motion.div>
-
-              <motion.h1
-                id="hero-headline"
-                variants={fadeUp}
-                initial="hidden"
-                animate="show"
-                transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[44px] sm:text-[64px] md:text-[80px] font-bold text-white leading-[1.05] tracking-tight mb-6"
-              >
-                Gruppenaktivitäten für{' '}
-                <span className="text-lime">Senioren</span>{' '}
-                einfacher planen, buchen und abrechnen.
-              </motion.h1>
-
-              <motion.p
-                variants={fadeUp}
-                initial="hidden"
-                animate="show"
-                transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[17px] md:text-[18px] text-white/70 leading-relaxed mb-10 max-w-2xl"
-              >
-                Tripando verbindet Pflegeeinrichtungen, soziale Träger und Vereine mit geprüften
-                Freizeit-, Kultur- und Gesundheitsangeboten – zentral, barrierefrei und
-                professionell organisiert.
-              </motion.p>
-
-              <motion.div
-                variants={fadeUp}
-                initial="hidden"
-                animate="show"
-                transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-wrap gap-3 mb-10"
-              >
-                <motion.a
-                  href="#demo"
-                  whileHover={prefersReducedMotion ? {} : { scale: 1.04 }}
-                  whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
-                  className="px-7 py-3.5 rounded-full bg-lime text-dark-green text-[15px] font-semibold tracking-wide focus-ring"
-                >
-                  Kostenlose Demo anfragen
-                </motion.a>
-                <a
-                  href="#how-it-works"
-                  className="px-7 py-3.5 rounded-full border border-white/30 text-white text-[15px] font-semibold hover:bg-white/10 transition-colors focus-ring flex items-center gap-2"
-                >
-                  So funktioniert Tripando
-                  <ArrowRight size={16} aria-hidden="true" />
-                </a>
-              </motion.div>
-
-              {/* Pill row */}
-              <motion.div
-                variants={fadeUp}
-                initial="hidden"
-                animate="show"
-                transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-wrap gap-2"
-              >
-                {pillLabels.map((label) => (
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="visible"
+            className="relative z-10 flex flex-col justify-end min-h-[min(90vh,900px)] p-10 md:p-14"
+          >
+            <div className="max-w-2xl">
+              {/* Metrics pills row */}
+              <motion.div variants={fadeUp} className="flex flex-wrap gap-2 mb-8">
+                {metrics.map((m, i) => (
                   <span
-                    key={label}
-                    className="px-4 py-2 rounded-full bg-white/10 text-white/80 text-[13px] font-medium border border-white/10"
+                    key={m.label}
+                    className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-medium"
+                    style={{
+                      background: 'rgba(255,255,255,0.07)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      color: 'rgba(240,237,228,0.9)',
+                    }}
                   >
-                    {label}
+                    <span
+                      className="tabular font-bold text-[#C7FF33]"
+                      style={{ letterSpacing: '-0.02em' }}
+                    >
+                      {m.value}
+                    </span>
+                    <span
+                      style={{
+                        width: 1,
+                        height: 12,
+                        background: 'rgba(255,255,255,0.2)',
+                        display: 'inline-block',
+                      }}
+                      aria-hidden="true"
+                    />
+                    {m.label}
                   </span>
                 ))}
               </motion.div>
+
+              {/* Eyebrow */}
+              <motion.div variants={fadeUp} className="inline-flex items-center gap-2 mb-5">
+                <span
+                  className="px-3 py-1.5 rounded-full text-[12px] font-semibold"
+                  style={{ background: '#C7FF33', color: '#0D1F14', letterSpacing: '0.01em' }}
+                >
+                  B2B SaaS für Soziale Einrichtungen
+                </span>
+              </motion.div>
+
+              {/* Headline */}
+              <motion.h1
+                id="hero-headline"
+                variants={fadeUp}
+                className="font-bold leading-[1.03] mb-6"
+                style={{
+                  fontSize: 'clamp(44px, 7vw, 88px)',
+                  letterSpacing: '-0.04em',
+                  color: '#F0EDE4',
+                }}
+              >
+                Gruppenaktivitäten{' '}
+                <span className="text-lime-gradient">einfacher</span>
+                {' '}planen.
+              </motion.h1>
+
+              {/* Subhead */}
+              <motion.p
+                variants={fadeUp}
+                className="text-[18px] leading-[1.6] mb-10 max-w-[480px]"
+                style={{ color: '#9CA3A0' }}
+              >
+                Tripando verbindet Pflegeeinrichtungen und soziale Träger mit geprüften
+                Freizeit-, Kultur- und Gesundheitsangeboten.
+              </motion.p>
+
+              {/* Buttons */}
+              <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
+                <motion.a
+                  href="#demo"
+                  whileHover={prefersReduced ? {} : { scale: 1.03 }}
+                  whileTap={prefersReduced ? {} : { scale: 0.98 }}
+                  className="group flex items-center gap-2 px-7 py-3.5 rounded-full text-[15px] font-semibold focus-ring"
+                  style={{ background: '#C7FF33', color: '#0D1F14', letterSpacing: '-0.01em' }}
+                >
+                  Kostenlose Demo anfragen
+                  <motion.span
+                    variants={{ hover: { x: 3 } }}
+                    aria-hidden="true"
+                  >
+                    <ArrowRight size={16} />
+                  </motion.span>
+                </motion.a>
+                <a
+                  href="#how-it-works"
+                  className="flex items-center gap-2 px-7 py-3.5 rounded-full text-[15px] font-semibold transition-colors duration-200 focus-ring"
+                  style={{
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    color: 'rgba(255,255,255,0.85)',
+                    letterSpacing: '-0.01em',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.08)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent'
+                  }}
+                >
+                  So funktioniert Tripando
+                </a>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right side: vertical progress dots */}
           <div
-            className="absolute right-10 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-4"
+            className="absolute right-10 bottom-14 hidden lg:flex flex-col items-center gap-5"
             aria-hidden="true"
           >
-            {['01', '02', '03'].map((n, i) => (
-              <div key={n} className="flex flex-col items-center gap-1">
-                <span className={`text-[11px] font-semibold ${i === 0 ? 'text-lime' : 'text-white/30'}`}>
+            {[
+              { n: '01', active: true, label: 'Suchen' },
+              { n: '02', active: false, label: 'Buchen' },
+              { n: '03', active: false, label: 'Abrechnen' },
+            ].map(({ n, active, label }) => (
+              <div key={n} className="flex flex-col items-center gap-1.5">
+                <span
+                  className="text-[10px] font-semibold"
+                  style={{ color: active ? '#C7FF33' : 'rgba(255,255,255,0.25)' }}
+                >
                   {n}
                 </span>
-                <div className={`w-1 h-1 rounded-full ${i === 0 ? 'bg-lime' : 'bg-white/20'}`} />
+                <div
+                  className="w-[1px] h-8"
+                  style={{ background: active ? 'rgba(199,255,51,0.4)' : 'rgba(255,255,255,0.1)' }}
+                />
+                <span
+                  className="text-[10px] font-medium"
+                  style={{
+                    color: active ? 'rgba(240,237,228,0.6)' : 'rgba(255,255,255,0.2)',
+                    writingMode: 'vertical-rl',
+                    transform: 'rotate(180deg)',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  {label}
+                </span>
               </div>
             ))}
           </div>
+
+          {/* Floating card: Neue Buchung */}
+          <motion.div
+            animate={prefersReduced ? {} : { y: [0, -8, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute top-[18%] right-[6%] hidden lg:block"
+            aria-hidden="true"
+          >
+            <div
+              className="px-4 py-3 rounded-2xl flex items-center gap-3"
+              style={{
+                background: 'rgba(255,255,255,0.08)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                minWidth: 200,
+              }}
+            >
+              <div className="relative">
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center"
+                  style={{ background: 'rgba(199,255,51,0.15)', border: '1px solid rgba(199,255,51,0.3)' }}
+                >
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#C7FF33]" />
+                </div>
+                <motion.div
+                  animate={prefersReduced ? {} : { scale: [1, 1.6, 1], opacity: [0.6, 0, 0.6] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute inset-0 rounded-full"
+                  style={{ background: 'rgba(199,255,51,0.3)' }}
+                />
+              </div>
+              <div>
+                <div className="text-[12px] font-semibold text-white">Neue Buchung</div>
+                <div className="text-[11px]" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  Zoo Duisburg · 32 Pers.
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Floating card: Stats */}
+          <motion.div
+            animate={prefersReduced ? {} : { y: [0, 8, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+            className="absolute top-[42%] right-[4%] hidden lg:block"
+            aria-hidden="true"
+          >
+            <div
+              className="px-4 py-3 rounded-2xl"
+              style={{
+                background: 'rgba(255,255,255,0.08)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                minWidth: 180,
+              }}
+            >
+              <div className="text-[11px] mb-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                Aktive Buchungen
+              </div>
+              <div className="flex items-end gap-2">
+                <span className="text-[28px] font-bold text-white tabular" style={{ letterSpacing: '-0.03em' }}>
+                  24
+                </span>
+                <span
+                  className="text-[12px] font-semibold mb-1 px-2 py-0.5 rounded-full"
+                  style={{ background: 'rgba(199,255,51,0.15)', color: '#C7FF33' }}
+                >
+                  ↑ 12 %
+                </span>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
