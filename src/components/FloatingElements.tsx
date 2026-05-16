@@ -71,7 +71,14 @@ export default function FloatingElements() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
 
   useLayoutEffect(() => {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
     const ctx = gsap.context(() => {
+      if (prefersReduced) {
+        gsap.set([titleRef.current, ...cardRefs.current], { autoAlpha: 1, x: 0, y: 0, rotation: 0 })
+        return
+      }
+
       // ── Title slides up on scroll-enter ──────────────────────────────
       gsap.from(titleRef.current, {
         autoAlpha: 0,
@@ -160,7 +167,7 @@ export default function FloatingElements() {
         </p>
 
         <button
-          className="mt-10 px-10 py-4 uppercase"
+          className="mt-10 px-10 py-4 uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f2d1e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f5f0e8]"
           style={{
             fontFamily: 'Inter, sans-serif',
             fontSize: '11px',

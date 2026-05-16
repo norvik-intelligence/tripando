@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import Hero from './components/Hero'
 import FloatingElements from './components/FloatingElements'
+import StepsSection from './components/StepsSection'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -29,6 +30,7 @@ export default function App() {
     <main style={{ backgroundColor: '#f5f0e8' }}>
       <Hero />
       <FloatingElements />
+      <StepsSection />
     </main>
   )
 }

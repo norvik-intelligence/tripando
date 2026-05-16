@@ -14,8 +14,15 @@ export default function Hero() {
 
   useLayoutEffect(() => {
     const chars = charsRef.current.filter(Boolean) as HTMLSpanElement[]
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     const ctx = gsap.context(() => {
+      if (prefersReduced) {
+        gsap.set(chars, { autoAlpha: 1, y: 0 })
+        gsap.set(grandmaRef.current, { autoAlpha: 1, y: 0 })
+        return
+      }
+
       // Hide before first paint to prevent flash
       gsap.set(chars, { autoAlpha: 0, y: 130 })
       gsap.set(grandmaRef.current, { autoAlpha: 0, y: 300 })
@@ -88,7 +95,7 @@ export default function Hero() {
             <a
               key={item}
               href="#"
-              className="uppercase tracking-[0.2em] text-xs"
+              className="uppercase tracking-[0.2em] text-xs rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f2d1e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f5f0e8]"
               style={{ color: '#1a3a2a', fontFamily: 'Inter, sans-serif', opacity: 0.6 }}
             >
               {item}
@@ -172,12 +179,6 @@ export default function Hero() {
         </p>
       </div>
 
-      <style>{`
-        @keyframes scrollPulse {
-          0%, 100% { transform: scaleY(1); opacity: 0.35; }
-          50% { transform: scaleY(0.6); opacity: 0.15; }
-        }
-      `}</style>
     </section>
   )
 }
